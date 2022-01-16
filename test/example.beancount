@@ -1,0 +1,34 @@
+
+option "operating_currency" "GBP"
+
+2020-10-10 open Income:Salary:ABC
+2020-10-10 open Assets:Current:JointAccount
+
+2020-10-10 * "Salary From ABC Corp."
+  Income:Salary:ABC   -1000.00 GBP
+  Assets:Current:JointAccount
+
+2020-11-10 * "Salary From ABC Corp."
+  Income:Salary:ABC   -1000.00 GBP
+  Assets:Current:JointAccount
+
+2020-12-10 * "Salary From ABC Corp."
+  Income:Salary:ABC   -1000.00 GBP
+  Assets:Current:JointAccount
+
+2021-01-10 * "Salary From ABC Corp."
+  Income:Salary:ABC   -1000.00 GBP
+  Assets:Current:JointAccount
+
+2021-02-10 * "Salary From ABC Corp."
+  Income:Salary:ABC   -1000.00 GBP
+  Assets:Current:JointAccount
+
+2021-03-10 * "Salary From ABC Corp."
+  Income:Salary:ABC   -1000.00 GBP
+  Assets:Current:JointAccount
+
+2021-04-10 * "Salary From ABC Corp."
+  Income:Salary:ABC   -1000.00 GBP
+  Assets:Current:JointAccount
+
