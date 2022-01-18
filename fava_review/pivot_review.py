@@ -1,4 +1,9 @@
+import petl
 from fava.core import FavaLedger
+
+
+def bean_query_to_petl(rows) -> petl.Table:
+    return petl.fromdicts([nt._asdict() for nt in rows])
 
 
 class PivotReview:
