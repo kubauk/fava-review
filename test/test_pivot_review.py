@@ -59,23 +59,16 @@ def test_monthly_income_and_expenses_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
     types, rows = pivot_review.income_and_expense_by_month()
     assert_that(types, contains_exactly(
-        ('year', int), ('month', int), ('account', str), ('total', Decimal), ('currency', str)))
+        ('account', str), ('y2020m10', Decimal), ('y2020m11', Decimal), ('y2020m12', Decimal), ('y2021m01', Decimal),
+        ('y2021m02', Decimal), ('y2021m03', Decimal), ('y2021m04', Decimal), ('total', Decimal)))
 
     assert_that(rows, contains_inanyorder(
-        row({'year': 2020, 'month': 10, 'account': 'Income:Salary:ABC', 'total': Decimal('-1000.00'),
-             'currency': 'GBP'}),
-        row({'year': 2020, 'month': 11, 'account': 'Income:Salary:ABC', 'total': Decimal('-1000.00'),
-             'currency': 'GBP'}),
-        row({'year': 2020, 'month': 12, 'account': 'Income:Salary:ABC', 'total': Decimal('-1000.00'),
-             'currency': 'GBP'}),
-        row({'year': 2021, 'month': 1, 'account': 'Income:Salary:ABC', 'total': Decimal('-1000.00'),
-             'currency': 'GBP'}),
-        row({'year': 2021, 'month': 2, 'account': 'Income:Salary:ABC', 'total': Decimal('-1000.00'),
-             'currency': 'GBP'}),
-        row({'year': 2021, 'month': 3, 'account': 'Income:Salary:ABC', 'total': Decimal('-1000.00'),
-             'currency': 'GBP'}),
-        row({'year': 2021, 'month': 4, 'account': 'Income:Salary:ABC', 'total': Decimal('-1000.00'),
-             'currency': 'GBP'})))
+        row({'account': 'Income:Salary:ABC', 'y2020m10': Decimal('-1000'), 'y2020m11': Decimal('-1000'),
+             'y2020m12': Decimal('-1000'), 'y2021m01': Decimal('-1000'), 'y2021m02': Decimal('-1000'),
+             'y2021m03': Decimal('-1000'), 'y2021m04': Decimal('-1000'), 'total': Decimal('-7000')}),
+        row({'account': 'total', 'y2020m10': Decimal('-1000'), 'y2020m11': Decimal('-1000'),
+             'y2020m12': Decimal('-1000'), 'y2021m01': Decimal('-1000'), 'y2021m02': Decimal('-1000'),
+             'y2021m03': Decimal('-1000'), 'y2021m04': Decimal('-1000'), 'total': Decimal('-7000')})))
 
 
 def petl_matching_csv(param) -> Matcher[Table]:
