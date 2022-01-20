@@ -8,6 +8,7 @@ license = "MIT License"
 [tool.poetry.dependencies]
 python = "^3.9"
 fava = "^1.20.1"
+flake8 = "^4.0.1"
 
 [tool.poetry.dev-dependencies]
 PyHamcrest = "^2.0.3"
