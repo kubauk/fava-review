@@ -7,13 +7,13 @@ from fava_review import pivot_review
 from fava_review.pivot_review import PivotReview
 
 
-class FavaReview(FavaExtensionBase):
-    report_title = "Review"
+class FavaIncomeExpenseReview(FavaExtensionBase):
+    report_title = "Income/Expense Review"
 
     def __init__(self, ledger: "FavaLedger", config: Optional[str] = None) -> None:
         super().__init__(ledger, config)
 
-    def get_datetime(self):
+    def get_income_expenses_review_by_month(self):
 
         try:
             table = get_template_attribute("_query_table.html", "querytable")
