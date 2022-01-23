@@ -9,6 +9,7 @@ license = "MIT License"
 python = "^3.7"
 fava = "^1.20.1"
 petl = "^1.7.4"
+beautifulsoup4 = "^4.10.0"
 
 [tool.poetry.dev-dependencies]
 PyHamcrest = "^2.0.3"

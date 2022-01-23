@@ -8,13 +8,25 @@ option "operating_currency" "GBP"
   Income:Salary:ABC   -1000.00 GBP
   Assets:Current:JointAccount
 
+2020-10-11 * "Groceries"
+  Assets:Current:JointAccount
+  Expenses:Groceries 10.00 GBP
+
 2020-11-10 * "Salary From ABC Corp."
   Income:Salary:ABC   -1000.00 GBP
   Assets:Current:JointAccount
 
+2020-11-11 * "Groceries"
+  Assets:Current:JointAccount
+  Expenses:Groceries 20.00 GBP
+
 2020-12-10 * "Salary From ABC Corp."
   Income:Salary:ABC   -1000.00 GBP
   Assets:Current:JointAccount
+
+2020-12-11 * "Groceries"
+  Assets:Current:JointAccount
+  Expenses:Groceries 30.00 GBP
 
 2021-01-10 * "Salary From ABC Corp."
   Income:Salary:ABC   -1000.00 GBP
@@ -28,7 +40,15 @@ option "operating_currency" "GBP"
   Income:Salary:ABC   -1000.00 GBP
   Assets:Current:JointAccount
 
+2021-03-11 * "Groceries"
+  Assets:Current:JointAccount
+  Expenses:Groceries 60.00 GBP
+
 2021-04-10 * "Salary From ABC Corp."
   Income:Salary:ABC   -1000.00 GBP
   Assets:Current:JointAccount
+
+2021-04-11 * "Groceries"
+  Assets:Current:JointAccount
+  Expenses:Groceries 70.00 GBP
 

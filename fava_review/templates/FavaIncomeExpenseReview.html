@@ -1,3 +1,37 @@
+{% import "_query_table.html" as query_table %}
+{% macro report_table(review_data) %}
 
+{% set sort_type = {
+    "<class 'decimal.Decimal'>": 'num',
+    "<class 'cdecimal.Decimal'>": 'num',
+    "<class 'int'>": 'num',
+} %}
+
+<table is="sortable-table">
+  <thead>
+    <tr>
+      {% for name in review_data[0].keys() %}
+      <th>{{ name }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in review_data[0:review_data|length-1] %}
+    <tr>
+      {% for data in row.values() %}
+        <td>{{ data }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      {% for data in review_data[review_data|length-1].values() %}
+        <td>{{ data }}</td>
+      {% endfor %}
+    </tr>
+  </tfoot>
+</table>
+{% endmacro %}
 <p>Income/Expenses Review</p>
-{{ extension.get_income_expenses_review_by_month() }}
+{{ report_table(extension.get_income_expenses_review_by_month()) }}

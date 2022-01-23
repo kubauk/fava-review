@@ -1,9 +1,9 @@
 from _decimal import Decimal
-from typing import NamedTuple, Any
+from typing import NamedTuple
 
 import petl
 from fava.core import FavaLedger
-from hamcrest import assert_that, contains_exactly, contains_inanyorder, equal_to
+from hamcrest import assert_that, is_
 from hamcrest.core.base_matcher import BaseMatcher, T
 from hamcrest.core.description import Description
 from hamcrest.core.matcher import Matcher
@@ -13,62 +13,26 @@ from petl import Table, MemorySource
 from fava_review.pivot_review import PivotReview
 from fava_review.pivot_review import bean_query_to_petl
 
-ResultRow = NamedTuple
-
-
-class RowResultMatcher(BaseMatcher[ResultRow]):
-    def _matches(self, item: ResultRow) -> bool:
-        return self._describe_and_check(item, StringDescription())
-
-    def describe_to(self, description: Description) -> None:
-        description.append_text('ResultRow matching {}'.format(self._params))
-
-    def describe_mismatch(self, item: ResultRow, mismatch_description: Description) -> None:
-        self._describe_and_check(item, mismatch_description)
-
-    def _describe_and_check(self, item: ResultRow, description: Description) -> bool:
-        fields = list(item._fields)
-        for key in self._params.keys():
-            if key not in item._fields:
-                description.append_text("ResultRow was missing field {}.".format(key))
-                return False
-            else:
-                fields.remove(key)
-
-        if len(fields) != 0:
-            description.append_text("Unexpected fields in ResultRow: {}".format(fields))
-            return False
-
-        for key in self._params.keys():
-            if self._params[key] != getattr(item, key):
-                description.append_text(
-                    "ResultRow['{}'] was {} but expected {}".format(key, item[key], self._params[key]))
-                return False
-        return True
-
-    def __init__(self, param: Any) -> None:
-        super().__init__()
-        self._params = param
-
-
-def row(param) -> BaseMatcher[ResultRow]:
-    return RowResultMatcher(param)
-
 
 def test_monthly_income_and_expenses_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    types, rows = pivot_review.income_and_expense_by_month()
-    assert_that(types, contains_exactly(
-        ('account', str), ('y2020m10', Decimal), ('y2020m11', Decimal), ('y2020m12', Decimal), ('y2021m01', Decimal),
-        ('y2021m02', Decimal), ('y2021m03', Decimal), ('y2021m04', Decimal), ('total', Decimal)))
+    rows = pivot_review.income_and_expense_by_month()
 
-    assert_that(rows, contains_inanyorder(
-        row({'account': 'Income:Salary:ABC', 'y2020m10': Decimal('-1000'), 'y2020m11': Decimal('-1000'),
-             'y2020m12': Decimal('-1000'), 'y2021m01': Decimal('-1000'), 'y2021m02': Decimal('-1000'),
-             'y2021m03': Decimal('-1000'), 'y2021m04': Decimal('-1000'), 'total': Decimal('-7000')}),
-        row({'account': 'total', 'y2020m10': Decimal('-1000'), 'y2020m11': Decimal('-1000'),
-             'y2020m12': Decimal('-1000'), 'y2021m01': Decimal('-1000'), 'y2021m02': Decimal('-1000'),
-             'y2021m03': Decimal('-1000'), 'y2021m04': Decimal('-1000'), 'total': Decimal('-7000')})))
+    assert_that(rows, is_([{'account': 'Expenses:Groceries', '2020-10': Decimal('10.00'),
+                            '2020-11': Decimal('20.00'), '2020-12': Decimal('30.00'),
+                            '2021-01': Decimal('0.00'), '2021-02': Decimal('0.00'),
+                            '2021-03': Decimal('60.00'), '2021-04': Decimal('70.00'),
+                            'total': Decimal('190.00')},
+                           {'account': 'Income:Salary:ABC', '2020-10': Decimal('-1000.00'),
+                            '2020-11': Decimal('-1000.00'), '2020-12': Decimal('-1000.00'),
+                            '2021-01': Decimal('-1000.00'), '2021-02': Decimal('-1000.00'),
+                            '2021-03': Decimal('-1000.00'), '2021-04': Decimal('-1000.00'),
+                            'total': Decimal('-7000.00')},
+                           {'account': 'total', '2020-10': Decimal('-990.00'),
+                            '2020-11': Decimal('-980.00'), '2020-12': Decimal('-970.00'),
+                            '2021-01': Decimal('-1000.00'), '2021-02': Decimal('-1000.00'),
+                            '2021-03': Decimal('-940.00'), '2021-04': Decimal('-930.00'),
+                            'total': Decimal('-6810.00')}]))
 
 
 def petl_matching_csv(param) -> Matcher[Table]:
@@ -81,10 +45,6 @@ def petl_matching_csv(param) -> Matcher[Table]:
 
             mem_source = MemorySource('')
             petl.tocsv(item, mem_source, lineterminator='\n')
-
-            if not equal_to(param) \
-                    .matches(mem_source.getvalue().decode(), mismatch_description):
-                return False
 
             return True
 
@@ -101,6 +61,12 @@ def petl_matching_csv(param) -> Matcher[Table]:
 
 
 def test_bean_query_to_petl():
-    TestNamedTuple = NamedTuple('moo', [('account', str), ('month', int)])
-    t = bean_query_to_petl([TestNamedTuple(account='Expenses:EatingOut', month=2)])
-    assert_that(t, petl_matching_csv("account,month\nExpenses:EatingOut,2\n"))
+    # noinspection PyPep8Naming
+    TestTuple = NamedTuple('TestTuple',
+                           [('year', int), ('total', Decimal),
+                            ('account', str), ('month', int),
+                            ('currency', str)])
+    t = bean_query_to_petl(
+        [TestTuple(account='Expenses:EatingOut', month=2, year=2022, total=Decimal(2), currency='GBP')])
+    assert_that(list(petl.dicts(t)),
+                is_([{'date': '2022-02', 'account': 'Expenses:EatingOut', 'total': Decimal('2'), 'currency': 'GBP'}]))
