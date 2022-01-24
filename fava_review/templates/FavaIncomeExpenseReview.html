@@ -1,16 +1,11 @@
 {% import 'macros/_account_macros.html' as account_macros %}
 {% macro report_table(review_data) %}
-{% set sort_type = {
-    "<class 'decimal.Decimal'>": 'num',
-    "<class 'cdecimal.Decimal'>": 'num',
-    "<class 'int'>": 'num',
-} %}
-
 <table is="sortable-table">
   <thead>
     <tr>
       {% for name in review_data[0].keys() %}
-      <th>{{ name }}</th>
+      {% set data = review_data[0][name] %}
+      <th data-sort="{{ 'string' if 'AccountName' in data.__class__.__name__ else 'num' }}">{{ name }}</th>
       {% endfor %}
     </tr>
   </thead>
@@ -19,11 +14,11 @@
     <tr>
       {% for data in row.values() %}
         <td>
-          {% if 'AccountName' in data.__class__.__name__ %}
-            {{ account_macros.account_name(extension.ledger, data) }}
-          {% else %}
-            {{ data }}
-          {% endif %}
+        {% if 'AccountName' in data.__class__.__name__ %}
+          {{ account_macros.account_name(extension.ledger, data) }}
+        {% else %}
+          {{ data }}
+        {% endif %}
         </td>
       {% endfor %}
     </tr>

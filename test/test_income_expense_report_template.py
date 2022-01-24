@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, List, Tuple, Any, Union
 
 from fava.core import FavaLedger
 from hamcrest import assert_that, contains_exactly
@@ -46,3 +46,15 @@ def test_table_body_account_names_are_links(example_ledger: FavaLedger, extensio
     matchers: Matcher[Sequence[str]] = contains_exactly('Expenses:Groceries', 'Income:Salary:ABC')
     assert_that(tags, matchers)
 
+
+def test_table_head_has_sort_attributes(example_ledger: FavaLedger, extension_template_soup: callable,
+                                        client) -> None:
+    template_soup = extension_template_soup("FavaIncomeExpenseReview.html", FavaIncomeExpenseReview(example_ledger))
+    tags: Sequence[tuple[str, Union[str, str]]] = \
+        [(tag.get_text().strip(), 'no data-sort' if not tag.has_attr('data-sort') else tag['data-sort'])
+         for tag in template_soup.select('thead th')]
+    matchers: Matcher[Sequence[tuple[str, Union[str, str]]]] = \
+        contains_exactly(('account', 'string'), ('2020-10', 'num'), ('2020-11', 'num'), ('2020-12', 'num'),
+                         ('2021-01', 'num'), ('2021-02', 'num'), ('2021-03', 'num'), ('2021-04', 'num'),
+                         ('total', 'num'))
+    assert_that(tags, matchers)
