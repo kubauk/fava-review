@@ -1,6 +1,5 @@
-{% import "_query_table.html" as query_table %}
+{% import 'macros/_account_macros.html' as account_macros %}
 {% macro report_table(review_data) %}
-
 {% set sort_type = {
     "<class 'decimal.Decimal'>": 'num',
     "<class 'cdecimal.Decimal'>": 'num',
@@ -19,7 +18,13 @@
     {% for row in review_data[0:review_data|length-1] %}
     <tr>
       {% for data in row.values() %}
-        <td>{{ data }}</td>
+        <td>
+          {% if 'AccountName' in data.__class__.__name__ %}
+            {{ account_macros.account_name(extension.ledger, data) }}
+          {% else %}
+            {{ data }}
+          {% endif %}
+        </td>
       {% endfor %}
     </tr>
     {% endfor %}
