@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+from typing import Callable
 
 import bs4
 import jinja2 as jinja2
@@ -21,14 +22,22 @@ def client():
 
 
 @fixture
-def example_ledger():
-    ledger = FavaLedger(os.path.join(os.path.dirname(__file__), 'example.beancount'))
-    ledger.load_file()
-    return ledger
+def load_ledger() -> Callable:
+    def ledger_loader(filename: str):
+        ledger = FavaLedger(os.path.join(os.path.dirname(__file__), filename))
+        ledger.load_file()
+        return ledger
+
+    return ledger_loader
+
+
+@fixture
+def example_ledger(load_ledger: Callable) -> FavaLedger:
+    return load_ledger('example.beancount')
 
 
 @pytest.fixture
-def extension_template():
+def extension_template() -> Callable:
     extension_directory = Path(os.path.dirname(__file__)).parent.absolute()
     fava_directory = os.path.dirname(sys.modules['fava'].__file__)
 
@@ -42,7 +51,7 @@ def extension_template():
 
 
 @pytest.fixture
-def extension_template_soup(extension_template):
+def extension_template_soup(extension_template) -> Callable:
     def soup_of(template_file, extension):
         template = extension_template(template_file)
         return bs4.BeautifulSoup(template.render(extension=extension))

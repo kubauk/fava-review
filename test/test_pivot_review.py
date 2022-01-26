@@ -1,5 +1,5 @@
 from _decimal import Decimal
-from typing import NamedTuple
+from typing import NamedTuple, Callable
 
 import petl
 from fava.core import FavaLedger
@@ -70,3 +70,15 @@ def test_bean_query_to_petl():
         [TestTuple(account='Expenses:EatingOut', month=2, year=2022, total=Decimal(2), currency='GBP')])
     assert_that(list(petl.dicts(t)),
                 is_([{'date': '2022-02', 'account': 'Expenses:EatingOut', 'total': Decimal('2'), 'currency': 'GBP'}]))
+
+
+def test_starting_currency_matches_currency_with_more_positions(load_ledger: Callable):
+    ledger = load_ledger('no-operating-currency-and-usd-more-than-gbp.beancount')
+    review = PivotReview(ledger)
+    assert_that(review.best_starting_currency(), is_('USD'))
+
+
+def test_starting_currency_matches_first_operating_currency(load_ledger: Callable):
+    ledger = load_ledger('gbp-first-operating-currency-and-usd-more-than-gbp.beancount')
+    review = PivotReview(ledger)
+    assert_that(review.best_starting_currency(), is_('GBP'))

@@ -8,6 +8,10 @@ option "operating_currency" "GBP"
   Income:Salary:ABC   -1000.00 GBP
   Assets:Current:JointAccount
 
+2020-10-11 * "Salary From Hoogle"
+  Income:Salary:Hoogle -200.00 USD
+  Assets:Current:JointAccount
+
 2020-10-11 * "Groceries"
   Assets:Current:JointAccount
   Expenses:Groceries 10.00 GBP
