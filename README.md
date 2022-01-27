@@ -42,4 +42,4 @@ fava-review uses your
 - Additional reports including Assets/Liabilities.
 - Percentage changes instead of absolute values.
 - Setting projections and tracking actuals against estimates.
-  - [More](https://github.com/kubauk/fava-review/issues)
+- [More](https://github.com/kubauk/fava-review/issues)
