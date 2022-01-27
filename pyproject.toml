@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fava-review"
-version = "0.1.0"
+version = "0.8.0"
 description = "A Fava extension to help review transactions over a series of periods."
 authors = ["Jakub Jamro <kuba.jamro@gmail.com>"]
 license = "MIT License"
