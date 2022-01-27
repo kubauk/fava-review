@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional, Any, Dict
 
 from fava.core import FavaLedger
 from fava.ext import FavaExtensionBase
@@ -14,7 +14,7 @@ class FavaIncomeExpenseReview(FavaExtensionBase):
         super().__init__(ledger, config)
         self.review = PivotReview(self.ledger)
 
-    def get_income_expenses_review_by_month(self) -> list[dict[str, Any]]:
+    def get_income_expenses_review_by_month(self) -> list[Dict[str, Any]]:
         try:
             return self.review.income_and_expense_by_month()
         except Exception:
