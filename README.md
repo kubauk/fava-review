@@ -1,3 +1,6 @@
+
+[](https://pypi.python.org/pypi/fava)
+
 # The problem
 [Fava](https://beancount.github.io/fava/index.html) is a great UI for [Beancount](https://beancount.github.io/) however 
 it only presents you with a snapshot of your finances for any given time period. Often it is useful to see ones' finances over a series of time periods to:
