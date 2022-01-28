@@ -1,5 +1,5 @@
-
-[](https://pypi.python.org/pypi/fava)
+[![](https://img.shields.io/pypi/l/fava-review.svg)](https://pypi.python.org/pypi/fava-review)
+[![](https://img.shields.io/pypi/v/fava-review.svg)](https://pypi.python.org/pypi/fava-review)
 
 # The problem
 [Fava](https://beancount.github.io/fava/index.html) is a great UI for [Beancount](https://beancount.github.io/) however 
