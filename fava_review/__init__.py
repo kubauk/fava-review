@@ -9,14 +9,14 @@ from fava_review import pivot_review
 from fava_review.pivot_review import PivotReview
 
 
-class FavaIncomeExpenseReview(FavaExtensionBase):
-    report_title = "Income/Expense Review"
+class FavaReview(FavaExtensionBase):
+    report_title = "Fava Review"
 
     def __init__(self, ledger: FavaLedger, config: Optional[str] = None) -> None:
         super().__init__(ledger, config)
         self.review = PivotReview(self.ledger)
 
-    def get_income_expenses_review_by_month(self) -> list[dict[str, Any]]:
+    def get_income_expenses_review(self) -> list[dict[str, Any]]:
         try:
             return self.review.income_and_expense_by(g.interval)
         except Exception:
