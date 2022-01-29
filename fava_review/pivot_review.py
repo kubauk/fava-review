@@ -3,13 +3,15 @@ from typing import Optional
 
 import petl
 from fava.core import FavaLedger
+from fava.util.date import Interval
 from petl import Table
 from petl.transform.joins import JoinView
 
 
-def bean_query_to_petl(rows) -> petl.Table:
+def bean_query_to_petl(rows, interval: Interval) -> petl.Table:
     t = petl.fromdicts([nt._asdict() for nt in rows])
-    t = petl.fieldmap(t, {'date': lambda rec: "{}-{:02d}".format(rec['year'], rec['month']),
+    t = petl.fieldmap(t, {'date': lambda rec: "{}".format(rec['year'])
+    if interval == Interval.YEAR else "{}-{:02d}".format(rec['year'], rec['month']),
                           'account': lambda rec: AccountName(rec['account'].strip()),
                           'total': lambda rec: rec['total'],
                           'currency': lambda rec: rec['currency']})
@@ -21,11 +23,11 @@ class AccountName(str):
 
 
 class PivotReview(object):
-    REVIEW_QUERY = 'SELECT year, month, root(account, 4) as account, sum(number) as total, currency ' \
-            'WHERE (account ~ "{}" OR account ~ "{}") and currency = "{}" ' \
-            'GROUP BY year, month, account, currency ' \
-            'ORDER BY year, month, currency, account ' \
-            'FLATTEN'
+    REVIEW_QUERY = 'SELECT {date}, root(account, 4) as account, sum(number) as total, currency ' \
+                   'WHERE (account ~ "{account1}" OR account ~ "{account2}") and currency = "{currency}" ' \
+                   'GROUP BY {date}, account, currency ' \
+                   'ORDER BY {date}, currency, account ' \
+                   'FLATTEN'
 
     CURRENCY_QUERY = 'SELECT currency, count(currency) GROUP BY currency ORDER BY count_currency DESC'
 
@@ -34,14 +36,19 @@ class PivotReview(object):
         self._current_currency: Optional[str] = None
         super().__init__()
 
-    def income_and_expense_by_month(self):
-        _, _, rows = self._ledger.query_shell.execute_query(
-            self.REVIEW_QUERY.format('Income', 'Expenses', self.current_operating_currency()))
+    def income_and_expense_by(self, interval: Interval):
+        _, _, rows = self._ledger.query_shell.execute_query(self.review_query_for(interval))
 
-        t = bean_query_to_petl(rows)
+        t = bean_query_to_petl(rows, interval)
         t = petl.pivot(t, 'account', 'date', 'total', sum, Decimal(0))
         t = self.add_total_column_and_row(t)
         return list(petl.dicts(t))
+
+    def review_query_for(self, interval: Interval):
+        query_format = self.REVIEW_QUERY \
+            .format(date='year' if interval == Interval.YEAR else 'year, month', account1='Income', account2='Expenses',
+                    currency=self.current_operating_currency())
+        return query_format
 
     @staticmethod
     def add_total_column_and_row(view: Table) -> Table:

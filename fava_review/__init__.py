@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Optional, Any
 
+from fava.application import g
 from fava.core import FavaLedger
 from fava.ext import FavaExtensionBase
 
@@ -17,7 +18,7 @@ class FavaIncomeExpenseReview(FavaExtensionBase):
 
     def get_income_expenses_review_by_month(self) -> list[dict[str, Any]]:
         try:
-            return self.review.income_and_expense_by_month()
+            return self.review.income_and_expense_by(g.interval)
         except Exception:
             raise
 
