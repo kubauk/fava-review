@@ -9,9 +9,14 @@ from petl.transform.joins import JoinView
 
 
 def bean_query_to_petl(rows, interval: Interval) -> petl.Table:
+    record_date = {
+        Interval.MONTH: lambda rec: '{}-{:02d}'.format(rec['year'], rec['month']),
+        Interval.YEAR: lambda rec: '{}'.format(rec['year']),
+        Interval.QUARTER: lambda rec: "".join(rec['quarter_date'].split('-'))
+    }
+
     t = petl.fromdicts([nt._asdict() for nt in rows])
-    t = petl.fieldmap(t, {'date': lambda rec: "{}".format(rec['year'])
-    if interval == Interval.YEAR else "{}-{:02d}".format(rec['year'], rec['month']),
+    t = petl.fieldmap(t, {'date': record_date[interval],
                           'account': lambda rec: AccountName(rec['account'].strip()),
                           'total': lambda rec: rec['total'],
                           'currency': lambda rec: rec['currency']})
@@ -45,8 +50,15 @@ class PivotReview(object):
         return list(petl.dicts(t))
 
     def review_query_for(self, interval: Interval):
+        date_selections = {
+            Interval.MONTH: 'year, month',
+            Interval.YEAR: 'year',
+            Interval.QUARTER: 'quarter(date)'
+        }
         query_format = self.REVIEW_QUERY \
-            .format(date='year' if interval == Interval.YEAR else 'year, month', account1='Income', account2='Expenses',
+            .format(date=date_selections[interval],
+                    account1='Income',
+                    account2='Expenses',
                     currency=self.current_operating_currency())
         return query_format
 

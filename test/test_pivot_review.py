@@ -48,6 +48,21 @@ def test_yearly_income_and_expenses_query(example_ledger: FavaLedger):
                             '2020': Decimal('-2940.00'), '2021': Decimal('-3870.00'), 'total': Decimal('-6810.00')}]))
 
 
+def test_quarterly_income_and_expenses_query(example_ledger: FavaLedger):
+    pivot_review = PivotReview(example_ledger)
+    rows = pivot_review.income_and_expense_by(Interval.QUARTER)
+
+    assert_that(rows, is_([{'account': 'Expenses:Groceries',
+                            '2020Q4': Decimal('60.00'), '2021Q1': Decimal('60.00'), '2021Q2': Decimal('70.00'),
+                            'total': Decimal('190.00')},
+                           {'account': 'Income:Salary:ABC',
+                            '2020Q4': Decimal('-3000.00'), '2021Q1': Decimal('-3000.00'), '2021Q2': Decimal('-1000.00'),
+                            'total': Decimal('-7000.00')},
+                           {'account': 'total',
+                            '2020Q4': Decimal('-2940.00'), '2021Q1': Decimal('-2940.00'), '2021Q2': Decimal('-930.00'),
+                            'total': Decimal('-6810.00')}]))
+
+
 def petl_matching_csv(param) -> Matcher[Table]:
     class PetlMatcher(BaseMatcher[Table]):
         @staticmethod
