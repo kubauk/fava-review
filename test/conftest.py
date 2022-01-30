@@ -14,11 +14,11 @@ app.config['BEANCOUNT_FILES'] = [os.path.join(os.path.dirname(__file__), 'exampl
 
 
 @fixture
-def client():
-    with app.app_context():
-        with app.test_request_context():
-            _pull_beancount_file(None, {'bfile': 'beancount'})
-            yield app
+def test_request(request):
+    path = request.param if hasattr(request, 'param') else '/extension_report/FavaReview'
+    with app.test_request_context(path=path):
+        _pull_beancount_file(None, {'bfile': 'beancount'})
+        yield app
 
 
 @fixture

@@ -1,5 +1,6 @@
 from typing import Sequence, Union
 
+import pytest
 from fava.core import FavaLedger
 from hamcrest import assert_that, contains_exactly
 from hamcrest.core.matcher import Matcher
@@ -8,7 +9,7 @@ from fava_review import FavaReview
 
 
 def test_table_header_contains_all_fields(example_ledger: FavaLedger, extension_template_soup: callable,
-                                          client) -> None:
+                                          test_request) -> None:
     template_soup = extension_template_soup("FavaReview.html",
                                             FavaReview(example_ledger))
     tags: Sequence[str] = [t.get_text().strip() for t in template_soup.select('thead th')]
@@ -18,7 +19,7 @@ def test_table_header_contains_all_fields(example_ledger: FavaLedger, extension_
 
 
 def test_table_body_contains_all_fields(example_ledger: FavaLedger, extension_template_soup: callable,
-                                        client) -> None:
+                                        test_request) -> None:
     template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
 
     tags: Sequence[Sequence[str]] = [[c.get_text().strip() for c in row.find_all('td')]
@@ -31,7 +32,7 @@ def test_table_body_contains_all_fields(example_ledger: FavaLedger, extension_te
 
 
 def test_table_footer_contains_all_fields(example_ledger: FavaLedger, extension_template_soup: callable,
-                                          client) -> None:
+                                          test_request) -> None:
     template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
     tags: Sequence[str] = [t.get_text() for t in template_soup.select('tfoot td')]
     matchers: Matcher[Sequence[str]] = contains_exactly(
@@ -40,7 +41,7 @@ def test_table_footer_contains_all_fields(example_ledger: FavaLedger, extension_
 
 
 def test_table_body_account_names_are_links(example_ledger: FavaLedger, extension_template_soup: callable,
-                                            client) -> None:
+                                            test_request) -> None:
     template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
     tags: Sequence[str] = [link.get_text().strip() for link in template_soup.select('tbody td a')]
     matchers: Matcher[Sequence[str]] = contains_exactly('Expenses:Groceries', 'Income:Salary:ABC')
@@ -48,7 +49,7 @@ def test_table_body_account_names_are_links(example_ledger: FavaLedger, extensio
 
 
 def test_table_head_has_sort_attributes(example_ledger: FavaLedger, extension_template_soup: callable,
-                                        client) -> None:
+                                        test_request) -> None:
     template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
     tags: Sequence[tuple[str, Union[str, str]]] = \
         [(tag.get_text().strip(), 'no data-sort' if not tag.has_attr('data-sort') else tag['data-sort'])
@@ -60,17 +61,30 @@ def test_table_head_has_sort_attributes(example_ledger: FavaLedger, extension_te
     assert_that(tags, matchers)
 
 
-def test_header_has_all_view_options(example_ledger: FavaLedger, extension_template_soup: callable, client) -> None:
+def test_header_has_all_view_options(example_ledger: FavaLedger, extension_template_soup: callable,
+                                     test_request) -> None:
     template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
     tags: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline b')]
     assert_that(tags, contains_exactly('Income / Expenses', 'Assets / Liabilities'))
 
 
 def test_header_only_has_links_for_unselected_view_options(example_ledger: FavaLedger,
-                                                           extension_template_soup: callable, client) -> None:
+                                                           extension_template_soup: callable, test_request) -> None:
     template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
     tags_with_links: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline a')]
     tags_no_links: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline b')
                                     if tag.find('a') is None]
     assert_that(tags_with_links, contains_exactly('Assets / Liabilities'))
     assert_that(tags_no_links, contains_exactly('Income / Expenses'))
+
+
+@pytest.mark.parametrize('test_request', ['/extension_report/FavaReview?view=assets_liabilities'], indirect=True)
+def test_header_link_selection_changes_with_each_view(example_ledger: FavaLedger, extension_template_soup: callable,
+                                                      test_request):
+    template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
+    tags_with_links: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline a')]
+    tags_no_links: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline b')
+                                    if tag.find('a') is None]
+    assert_that(tags_with_links, contains_exactly('Income / Expenses'))
+    assert_that(tags_no_links, contains_exactly('Assets / Liabilities'))
+    pass
