@@ -1,4 +1,4 @@
-from typing import Sequence, List, Tuple, Any, Union
+from typing import Sequence, Union
 
 from fava.core import FavaLedger
 from hamcrest import assert_that, contains_exactly
@@ -58,3 +58,19 @@ def test_table_head_has_sort_attributes(example_ledger: FavaLedger, extension_te
                          ('2021-01', 'num'), ('2021-02', 'num'), ('2021-03', 'num'), ('2021-04', 'num'),
                          ('total', 'num'))
     assert_that(tags, matchers)
+
+
+def test_header_has_all_view_options(example_ledger: FavaLedger, extension_template_soup: callable, client) -> None:
+    template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
+    tags: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline b')]
+    assert_that(tags, contains_exactly('Income / Expenses', 'Assets / Liabilities'))
+
+
+def test_header_only_has_links_for_unselected_view_options(example_ledger: FavaLedger,
+                                                           extension_template_soup: callable, client) -> None:
+    template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
+    tags_with_links: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline a')]
+    tags_no_links: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline b')
+                                    if tag.find('a') is None]
+    assert_that(tags_with_links, contains_exactly('Assets / Liabilities'))
+    assert_that(tags_no_links, contains_exactly('Income / Expenses'))

@@ -33,5 +33,21 @@
   </tfoot>
 </table>
 {% endmacro %}
-<h2>Income/Expenses Review - {{ extension.current_operating_currency() }}</h2>
-{{ report_table(extension.get_income_expenses_review()) }}
+{% set view = request.args.get('view', 'income_expenses') %}
+{% set views = {
+  'income_expenses': ('Income / Expenses', extension.get_income_expenses_review),
+  'assets_liabilities': ('Assets / Liabilities', extension.get_assets_liabilities_review) } %}
+<div class="headerline">
+  {% for key, value in views.items() %}
+  <h3><b>
+    {% if not (view == key) %}
+    <a href="{{ url_for('extension_report', report_name='FavaReview', view=key) }}">{{ value[0] }}</a>
+    {% else %}
+    {{ value[0] }}
+    {% endif %}
+  </b></h3>
+  {% endfor %}
+</div>
+
+<h2>{{ views[view][0] }} Review - {{ extension.current_operating_currency() }}</h2>
+{{ report_table(views[view][1]()) }}
