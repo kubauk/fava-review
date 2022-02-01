@@ -13,24 +13,22 @@ it only presents you with a snapshot of your finances for any given time period.
 Fava Review is an [extension](https://beancount.github.io/fava/api/fava.ext.html) for 
 [fava](https://beancount.github.io/fava/index.html) which takes your finances and presents them over time.
 
-![](screenshot-sorting.png)
+![](screenshot.png)
 
-At the moment, only a monthly view is supported.
+Fava review currently supports the following views:
+- Income Statement
+- Balance Sheet
 
-Also, only an Income & Expense report is supported. 
+And the views allow filtering your accounts by the usual date, account and payee/tag filters.
+[Screenshot](screenshot-date-and-account-filter.png).
 
-However, it is possible to filter your accounts by the usual date, account and payee/tag filters.
-[Screenshot](screenshot-time-and-account-filter.png).
-
-And it's also possible to sort your data by and month or total column.
+And it's also possible to sort your data.   
 [Screenshot](screenshot-sorting.png).
 
 # How it works
 fava-review is very simple in its implementation. It uses bean-query through 
-[fava](https://beancount.github.io/fava/index.html) FavaLedger class and get the data monthly data for each account. 
-This information is then feed into [petl](https://petl.readthedocs.io/en/stable/) and pivoted into the monthly view.
-
-fava-review uses your 
+[fava](https://beancount.github.io/fava/index.html) FavaLedger class and retrieves the monthly data for each account. 
+This information is then feed into [petl](https://petl.readthedocs.io/en/stable/) and pivoted into the appropriate view.
 
 # How to install
 `pip install fava-review`
@@ -40,9 +38,7 @@ fava-review uses your
 - beancount <3, >=2.3.0
 
 # Planned Features
-- Support yearly, quarterly time intervals.
 - Support all currencies within beancount file.
-- Additional reports including Assets/Liabilities.
 - Percentage changes instead of absolute values.
 - Setting projections and tracking actuals against estimates.
 - [More](https://github.com/kubauk/fava-review/issues)
