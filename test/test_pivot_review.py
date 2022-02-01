@@ -84,6 +84,33 @@ def test_monthly_balance_sheet_query(example_ledger: FavaLedger):
                             'total': Decimal('6810.00')}]))
 
 
+def test_yearly_balance_sheet_query(example_ledger: FavaLedger):
+    pivot_review = PivotReview(example_ledger)
+    rows = pivot_review.balance_sheet_by(Interval.YEAR)
+
+    assert_that(rows, is_([{'account': 'Assets:Current:JointAccount',
+                            '2020': Decimal('2670.00'), '2021': Decimal('3645.00'), 'total': Decimal('6315.00')},
+                           {'account': 'Liabilities:CreditCard',
+                            '2020': Decimal('270.00'), '2021': Decimal('225.00'), 'total': Decimal('495.00')},
+                           {'account': 'total',
+                            '2020': Decimal('2940.00'), '2021': Decimal('3870.00'), 'total': Decimal('6810.00')}]))
+
+
+def test_quarterly_balance_sheet_query(example_ledger: FavaLedger):
+    pivot_review = PivotReview(example_ledger)
+    rows = pivot_review.balance_sheet_by(Interval.QUARTER)
+
+    assert_that(rows, is_([{'account': 'Assets:Current:JointAccount',
+                            '2020Q4': Decimal('2670.00'), '2021Q1': Decimal('2740.00'), '2021Q2': Decimal('905.00'),
+                            'total': Decimal('6315.00')},
+                           {'account': 'Liabilities:CreditCard',
+                            '2020Q4': Decimal('270.00'), '2021Q1': Decimal('200.00'), '2021Q2': Decimal('25.00'),
+                            'total': Decimal('495.00')},
+                           {'account': 'total',
+                            '2020Q4': Decimal('2940.00'), '2021Q1': Decimal('2940.00'), '2021Q2': Decimal('930.00'),
+                            'total': Decimal('6810.00')}]))
+
+
 def petl_matching_csv(param) -> Matcher[Table]:
     class PetlMatcher(BaseMatcher[Table]):
         @staticmethod
