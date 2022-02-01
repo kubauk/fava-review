@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, List
 
 import petl
 from fava.core import FavaLedger
@@ -48,7 +48,7 @@ class PivotReview(object):
         t = self.add_total_column_and_row(t)
         return list(petl.dicts(t))
 
-    def review_query_for(self, interval: Interval, accounts: list[str]):
+    def review_query_for(self, interval: Interval, accounts: List[str]):
         date_query = {
             Interval.MONTH: 'year, month',
             Interval.YEAR: 'year',
