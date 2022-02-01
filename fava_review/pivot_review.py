@@ -28,12 +28,6 @@ class AccountName(str):
 
 
 class PivotReview(object):
-    REVIEW_QUERY = 'SELECT {date}, root(account, 4) as account, sum(number) as total, currency ' \
-                   'WHERE (account ~ "{account1}" OR account ~ "{account2}") and currency = "{currency}" ' \
-                   'GROUP BY {date}, account, currency ' \
-                   'ORDER BY {date}, currency, account ' \
-                   'FLATTEN'
-
     CURRENCY_QUERY = 'SELECT currency, count(currency) GROUP BY currency ORDER BY count_currency DESC'
 
     def __init__(self, ledger: FavaLedger) -> None:
@@ -42,25 +36,33 @@ class PivotReview(object):
         super().__init__()
 
     def income_and_expense_by(self, interval: Interval):
-        _, _, rows = self._ledger.query_shell.execute_query(self.review_query_for(interval))
+        return self.report_for(interval, ['Income', 'Expenses'])
 
+    def balance_sheet_by(self, interval: Interval):
+        return self.report_for(interval, ['Assets', 'Liabilities', 'Equity'])
+
+    def report_for(self, interval, accounts):
+        _, _, rows = self._ledger.query_shell.execute_query(self.review_query_for(interval, accounts))
         t = bean_query_to_petl(rows, interval)
         t = petl.pivot(t, 'account', 'date', 'total', sum, Decimal(0))
         t = self.add_total_column_and_row(t)
         return list(petl.dicts(t))
 
-    def review_query_for(self, interval: Interval):
-        date_selections = {
+    def review_query_for(self, interval: Interval, accounts: list[str]):
+        date_query = {
             Interval.MONTH: 'year, month',
             Interval.YEAR: 'year',
             Interval.QUARTER: 'quarter(date)'
         }
-        query_format = self.REVIEW_QUERY \
-            .format(date=date_selections[interval],
-                    account1='Income',
-                    account2='Expenses',
-                    currency=self.current_operating_currency())
-        return query_format
+
+        quoted_accounts = " OR account ~ ".join([f'"{a}"' for a in accounts])
+
+        return f'SELECT {date_query[interval]}, root(account, 4) as account, ' \
+               f'sum(number) as total, currency ' \
+               f'WHERE (account ~ {quoted_accounts}) and currency = "{self.current_operating_currency()}" ' \
+               f'GROUP BY {date_query[interval]}, account, currency ' \
+               f'ORDER BY {date_query[interval]}, currency, account ' \
+               f'FLATTEN'
 
     @staticmethod
     def add_total_column_and_row(view: Table) -> Table:

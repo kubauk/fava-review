@@ -36,7 +36,7 @@
 {% set view = request.args.get('view', 'income_expenses') %}
 {% set views = {
   'income_expenses': ('Income / Expenses', extension.get_income_expenses_review),
-  'assets_liabilities': ('Assets / Liabilities', extension.get_assets_liabilities_review) } %}
+  'balance_sheet': ('Balance Sheet', extension.get_balance_sheet_report) } %}
 <div class="headerline">
   {% for key, value in views.items() %}
   <h3><b>

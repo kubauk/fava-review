@@ -1,7 +1,12 @@
 
 option "operating_currency" "GBP"
 
+2020-10-10 custom "fava-extension" "fava_review" ""
+
 2020-10-10 open Income:Salary:ABC
+2020-10-11 open Income:Salary:Hoogle
+2020-10-11 open Expenses:Groceries
+2020-10-12 open Liabilities:CreditCard
 2020-10-10 open Assets:Current:JointAccount
 
 2020-10-10 * "Salary From ABC Corp."
@@ -16,6 +21,10 @@ option "operating_currency" "GBP"
   Assets:Current:JointAccount
   Expenses:Groceries 10.00 GBP
 
+2020-10-12 * "Pay Credit Card"
+  Assets:Current:JointAccount
+  Liabilities:CreditCard 100.00 GBP
+
 2020-11-10 * "Salary From ABC Corp."
   Income:Salary:ABC   -1000.00 GBP
   Assets:Current:JointAccount
@@ -23,6 +32,10 @@ option "operating_currency" "GBP"
 2020-11-11 * "Groceries"
   Assets:Current:JointAccount
   Expenses:Groceries 20.00 GBP
+
+2020-11-12 * "Pay Credit Card"
+  Assets:Current:JointAccount
+  Liabilities:CreditCard 90.00 GBP
 
 2020-12-10 * "Salary From ABC Corp."
   Income:Salary:ABC   -1000.00 GBP
@@ -32,9 +45,17 @@ option "operating_currency" "GBP"
   Assets:Current:JointAccount
   Expenses:Groceries 30.00 GBP
 
+2020-12-12 * "Pay Credit Card"
+  Assets:Current:JointAccount
+  Liabilities:CreditCard 80.00 GBP
+
 2021-01-10 * "Salary From ABC Corp."
   Income:Salary:ABC   -1000.00 GBP
   Assets:Current:JointAccount
+
+2021-01-12 * "Pay Credit Card"
+  Assets:Current:JointAccount
+  Liabilities:CreditCard 200.00 GBP
 
 2021-02-10 * "Salary From ABC Corp."
   Income:Salary:ABC   -1000.00 GBP
@@ -56,3 +77,6 @@ option "operating_currency" "GBP"
   Assets:Current:JointAccount
   Expenses:Groceries 70.00 GBP
 
+2021-04-12 * "Pay Credit Card"
+  Assets:Current:JointAccount
+  Liabilities:CreditCard 25.00 GBP

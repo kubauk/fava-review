@@ -63,6 +63,27 @@ def test_quarterly_income_and_expenses_query(example_ledger: FavaLedger):
                             'total': Decimal('-6810.00')}]))
 
 
+def test_monthly_balance_sheet_query(example_ledger: FavaLedger):
+    pivot_review = PivotReview(example_ledger)
+    rows = pivot_review.balance_sheet_by(Interval.MONTH)
+
+    assert_that(rows, is_([{'account': 'Assets:Current:JointAccount', '2020-10': Decimal('890.00'),
+                            '2020-11': Decimal('890.00'), '2020-12': Decimal('890.00'),
+                            '2021-01': Decimal('800.00'), '2021-02': Decimal('1000.00'),
+                            '2021-03': Decimal('940.00'), '2021-04': Decimal('905.00'),
+                            'total': Decimal('6315.00')},
+                           {'account': 'Liabilities:CreditCard', '2020-10': Decimal('100.00'),
+                            '2020-11': Decimal('90.00'), '2020-12': Decimal('80.00'),
+                            '2021-01': Decimal('200.00'), '2021-02': Decimal('0.00'),
+                            '2021-03': Decimal('0.00'), '2021-04': Decimal('25.00'),
+                            'total': Decimal('495.00')},
+                           {'account': 'total', '2020-10': Decimal('990.00'),
+                            '2020-11': Decimal('980.00'), '2020-12': Decimal('970.00'),
+                            '2021-01': Decimal('1000.00'), '2021-02': Decimal('1000.00'),
+                            '2021-03': Decimal('940.00'), '2021-04': Decimal('930.00'),
+                            'total': Decimal('6810.00')}]))
+
+
 def petl_matching_csv(param) -> Matcher[Table]:
     class PetlMatcher(BaseMatcher[Table]):
         @staticmethod

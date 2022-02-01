@@ -22,8 +22,11 @@ class FavaReview(FavaExtensionBase):
         except Exception:
             raise
 
-    def get_assets_liabilities_review(self) -> list[dict[str, Any]]:
-        return self.get_income_expenses_review()
+    def get_balance_sheet_report(self) -> list[dict[str, Any]]:
+        try:
+            return self.review.balance_sheet_by(g.interval)
+        except Exception:
+            raise
 
     def current_operating_currency(self) -> str:
         return self.review.current_operating_currency()
