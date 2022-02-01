@@ -16,9 +16,9 @@ class FavaReview(FavaExtensionBase):
         super().__init__(ledger, config)
         self.review = PivotReview(self.ledger)
 
-    def get_income_expenses_review(self) -> list[dict[str, Any]]:
+    def get_income_statement_report(self) -> list[dict[str, Any]]:
         try:
-            return self.review.income_and_expense_by(g.interval)
+            return self.review.income_statement_by(g.interval)
         except Exception:
             raise
 

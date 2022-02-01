@@ -15,9 +15,9 @@ from fava_review.pivot_review import PivotReview
 from fava_review.pivot_review import bean_query_to_petl
 
 
-def test_monthly_income_and_expenses_query(example_ledger: FavaLedger):
+def test_monthly_income_statement_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    rows = pivot_review.income_and_expense_by(Interval.MONTH)
+    rows = pivot_review.income_statement_by(Interval.MONTH)
 
     assert_that(rows, is_([{'account': 'Expenses:Groceries', '2020-10': Decimal('10.00'),
                             '2020-11': Decimal('20.00'), '2020-12': Decimal('30.00'),
@@ -36,9 +36,9 @@ def test_monthly_income_and_expenses_query(example_ledger: FavaLedger):
                             'total': Decimal('-6810.00')}]))
 
 
-def test_yearly_income_and_expenses_query(example_ledger: FavaLedger):
+def test_yearly_income_statement_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    rows = pivot_review.income_and_expense_by(Interval.YEAR)
+    rows = pivot_review.income_statement_by(Interval.YEAR)
 
     assert_that(rows, is_([{'account': 'Expenses:Groceries',
                             '2020': Decimal('60.00'), '2021': Decimal('130.00'), 'total': Decimal('190.00')},
@@ -48,9 +48,9 @@ def test_yearly_income_and_expenses_query(example_ledger: FavaLedger):
                             '2020': Decimal('-2940.00'), '2021': Decimal('-3870.00'), 'total': Decimal('-6810.00')}]))
 
 
-def test_quarterly_income_and_expenses_query(example_ledger: FavaLedger):
+def test_quarterly_income_statement_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    rows = pivot_review.income_and_expense_by(Interval.QUARTER)
+    rows = pivot_review.income_statement_by(Interval.QUARTER)
 
     assert_that(rows, is_([{'account': 'Expenses:Groceries',
                             '2020Q4': Decimal('60.00'), '2021Q1': Decimal('60.00'), '2021Q2': Decimal('70.00'),

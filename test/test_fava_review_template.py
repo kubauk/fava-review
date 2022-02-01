@@ -65,7 +65,7 @@ def test_header_has_all_view_options(example_ledger: FavaLedger, extension_templ
                                      test_request) -> None:
     template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
     tags: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline b')]
-    assert_that(tags, contains_exactly('Income / Expenses', 'Balance Sheet'))
+    assert_that(tags, contains_exactly('Income Statement', 'Balance Sheet'))
 
 
 def test_header_only_has_links_for_unselected_view_options(example_ledger: FavaLedger,
@@ -75,7 +75,7 @@ def test_header_only_has_links_for_unselected_view_options(example_ledger: FavaL
     tags_no_links: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline b')
                                     if tag.find('a') is None]
     assert_that(tags_with_links, contains_exactly('Balance Sheet'))
-    assert_that(tags_no_links, contains_exactly('Income / Expenses'))
+    assert_that(tags_no_links, contains_exactly('Income Statement'))
 
 
 @pytest.mark.parametrize('test_request', ['/extension_report/FavaReview?view=balance_sheet'], indirect=True)
@@ -85,6 +85,6 @@ def test_header_link_selection_changes_with_each_view(example_ledger: FavaLedger
     tags_with_links: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline a')]
     tags_no_links: Sequence[str] = [tag.get_text().strip() for tag in template_soup.select('div.headerline b')
                                     if tag.find('a') is None]
-    assert_that(tags_with_links, contains_exactly('Income / Expenses'))
+    assert_that(tags_with_links, contains_exactly('Income Statement'))
     assert_that(tags_no_links, contains_exactly('Balance Sheet'))
     pass

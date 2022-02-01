@@ -33,9 +33,9 @@
   </tfoot>
 </table>
 {% endmacro %}
-{% set view = request.args.get('view', 'income_expenses') %}
+{% set view = request.args.get('view', 'income_statement') %}
 {% set views = {
-  'income_expenses': ('Income / Expenses', extension.get_income_expenses_review),
+  'income_statement': ('Income Statement', extension.get_income_statement_report),
   'balance_sheet': ('Balance Sheet', extension.get_balance_sheet_report) } %}
 <div class="headerline">
   {% for key, value in views.items() %}

@@ -35,7 +35,7 @@ class PivotReview(object):
         self._current_currency: Optional[str] = None
         super().__init__()
 
-    def income_and_expense_by(self, interval: Interval):
+    def income_statement_by(self, interval: Interval):
         return self.report_for(interval, ['Income', 'Expenses'])
 
     def balance_sheet_by(self, interval: Interval):
