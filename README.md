@@ -34,7 +34,7 @@ This information is then feed into [petl](https://petl.readthedocs.io/en/stable/
 `pip install fava-review`
 
 ## Requirements
-- fava >= 1.20
+- 1.21 <= fava >= 1.20 (There is a breaking change in fava 1.22 that needs to be addressed by the plugin - See [Issue](https://github.com/kubauk/fava-review/issues/10))
 - beancount <3, >=2.3.0
 
 # Planned Features
