@@ -27,7 +27,7 @@ And it's also possible to sort your data.
 
 # How it works
 fava-review is very simple in its implementation. It uses bean-query through 
-[fava](https://beancount.github.io/fava/index.html) FavaLedger class and retrieves the monthly data for each account. 
+[fava](https://beancount.github.io/fava/index.html)'s FavaLedger class and retrieves the monthly data for each account. 
 This information is then feed into [petl](https://petl.readthedocs.io/en/stable/) and pivoted into the appropriate view.
 
 # How to install
