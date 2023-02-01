@@ -42,7 +42,8 @@ class PivotReview(object):
         return self.report_for(interval, ['Assets', 'Liabilities', 'Equity'])
 
     def report_for(self, interval, accounts):
-        _, _, rows = self._ledger.query_shell.execute_query(self.review_query_for(interval, accounts))
+        _, _, rows = self._ledger.query_shell.execute_query(query=self.review_query_for(interval, accounts),
+                                                            entries=self._ledger.get_filtered().entries)
         t = bean_query_to_petl(rows, interval)
         t = petl.pivot(t, 'account', 'date', 'total', sum, Decimal(0))
         t = self.add_total_column_and_row(t)
@@ -93,5 +94,6 @@ class PivotReview(object):
     def best_starting_currency(self) -> str:
         if len(self._ledger.options['operating_currency']) > 0:
             return self._ledger.options['operating_currency'][0]
-        _, _, rows = self._ledger.query_shell.execute_query(self.CURRENCY_QUERY)
+        _, _, rows = self._ledger.query_shell.execute_query(query=self.CURRENCY_QUERY, 
+                                                            entries=self._ledger.get_filtered().entries)
         return rows[0][0]
