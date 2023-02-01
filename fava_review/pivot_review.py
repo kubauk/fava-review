@@ -2,6 +2,7 @@ from decimal import Decimal
 from typing import Optional, List
 
 import petl
+from fava.context import g
 from fava.core import FavaLedger
 from fava.util.date import Interval
 from petl import Table
@@ -42,7 +43,8 @@ class PivotReview(object):
         return self.report_for(interval, ['Assets', 'Liabilities', 'Equity'])
 
     def report_for(self, interval, accounts):
-        _, _, rows = self._ledger.query_shell.execute_query(self.review_query_for(interval, accounts))
+        _, _, rows = self._ledger.query_shell.execute_query(query=self.review_query_for(interval, accounts),
+                                                            entries=g.filtered.entries)
         t = bean_query_to_petl(rows, interval)
         t = petl.pivot(t, 'account', 'date', 'total', sum, Decimal(0))
         t = self.add_total_column_and_row(t)
