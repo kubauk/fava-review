@@ -6,7 +6,7 @@ from typing import Callable
 import bs4
 import jinja2 as jinja2
 import pytest as pytest
-from fava.application import app, _pull_beancount_file
+from fava.application import app, _pull_beancount_file, _perform_global_filters
 from fava.core import FavaLedger
 from pytest import fixture
 
@@ -18,6 +18,7 @@ def test_request(request):
     path = request.param if hasattr(request, 'param') else '/extension_report/FavaReview'
     with app.test_request_context(path=path):
         _pull_beancount_file(None, {'bfile': 'beancount'})
+        _perform_global_filters()
         yield app
 
 
@@ -32,7 +33,7 @@ def load_ledger() -> Callable:
 
 
 @fixture
-def example_ledger(load_ledger: Callable) -> FavaLedger:
+def example_ledger(load_ledger: Callable, test_request) -> FavaLedger:
     return load_ledger('example.beancount')
 
 
