@@ -241,7 +241,6 @@ files = [
 ]
 
 [package.dependencies]
-importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 "jaraco.functools" = "*"
 more-itertools = {version = ">=2.6", markers = "python_version >= \"3.6\""}
 six = ">=1.11.0"
@@ -263,7 +262,6 @@ files = [
 
 [package.dependencies]
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
-importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 
 [[package]]
 name = "colorama"
@@ -279,14 +277,14 @@ files = [
 
 [[package]]
 name = "fava"
-version = "1.24.1"
+version = "1.25.1"
 description = "Web interface for the accounting tool Beancount."
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "fava-1.24.1-py3-none-any.whl", hash = "sha256:8756dd60ab93f5f6a78dc0505d3e98235ef1a88c2a0f2937ca9eb55f9b4cae1b"},
-    {file = "fava-1.24.1.tar.gz", hash = "sha256:63d4c3c46cba0e364e14d8d8feeb6e54eaf2e0222727a138406285f8a2b4228d"},
+    {file = "fava-1.25.1-py3-none-any.whl", hash = "sha256:2afb4b16a2d5062c59abd554840835c18b790135ee33d46fee2ede4382059ea2"},
+    {file = "fava-1.25.1.tar.gz", hash = "sha256:4496cfaa3ea15ea7fc0f91bcceb83404061fc524437d4811346c17f8b6653cf6"},
 ]
 
 [package.dependencies]
@@ -294,16 +292,16 @@ Babel = ">=2.7,<3"
 beancount = ">=2.3.5,<3"
 cheroot = ">=8,<10"
 click = ">=7,<9"
-Flask = ">=2,<3"
+Flask = ">=2.2,<3"
 Flask-Babel = ">=1,<4"
-importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 Jinja2 = ">=3,<4"
 markdown2 = ">=2.3.0,<3"
 ply = "*"
 simplejson = ">=3.16.0,<4"
-Werkzeug = ">=2,<3"
+Werkzeug = ">=2.2,<3"
 
 [package.extras]
+dev = ["build", "flake8", "flake8-pyi", "mypy", "pre-commit", "pyinstaller", "pylint", "pytest", "pytest-cov", "sphinx", "tox", "twine", "types-babel", "types-pkg-resources", "types-simplejson"]
 excel = ["pyexcel (>=0.2.2)", "pyexcel-ods3 (>=0.1.1)", "pyexcel-xls (>=0.1.0)", "pyexcel-xlsx (>=0.1.0)"]
 
 [[package]]
@@ -319,7 +317,6 @@ files = [
 ]
 
 [package.dependencies]
-importlib-metadata = {version = "<4.3", markers = "python_version < \"3.8\""}
 mccabe = ">=0.6.0,<0.7.0"
 pycodestyle = ">=2.8.0,<2.9.0"
 pyflakes = ">=2.4.0,<2.5.0"
@@ -507,7 +504,6 @@ files = [
 ]
 
 [package.dependencies]
-typing-extensions = {version = ">=3.6.4", markers = "python_version < \"3.8\""}
 zipp = ">=0.5"
 
 [package.extras]
@@ -820,9 +816,6 @@ files = [
     {file = "pluggy-1.0.0.tar.gz", hash = "sha256:4224373bacce55f955a878bf9cfa763c1e360858e330072059e10bad68531159"},
 ]
 
-[package.dependencies]
-importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
-
 [package.extras]
 dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
@@ -974,7 +967,6 @@ files = [
 atomicwrites = {version = ">=1.0", markers = "sys_platform == \"win32\""}
 attrs = ">=19.2.0"
 colorama = {version = "*", markers = "sys_platform == \"win32\""}
-importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
 iniconfig = "*"
 packaging = "*"
 pluggy = ">=0.12,<2.0"
@@ -1192,18 +1184,6 @@ files = [
 ]
 
 [[package]]
-name = "typing-extensions"
-version = "4.5.0"
-description = "Backported and Experimental Type Hints for Python 3.7+"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "typing_extensions-4.5.0-py3-none-any.whl", hash = "sha256:fb33085c39dd998ac16d1431ebc293a8b3eedd00fd4a32de0ff79002c19511b4"},
-    {file = "typing_extensions-4.5.0.tar.gz", hash = "sha256:5cb5f4a79139d699607b3ef622a1dedafa84e115ab0024e0d9c044a9479ca7cb"},
-]
-
-[[package]]
 name = "uritemplate"
 version = "4.1.1"
 description = "Implementation of RFC 6570 URI Templates"
@@ -1268,5 +1248,5 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.7"
-content-hash = "1b2db279767601a554fefd0291f07784ad7f4bbdb9cf58f809d4c3c36891acdc"
+python-versions = "^3.8"
+content-hash = "8c01f96be70bdd2dfe587f87416a5a23207704993a5c76b4b1be7214a37557cb"
