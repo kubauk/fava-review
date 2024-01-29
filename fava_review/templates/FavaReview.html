@@ -41,7 +41,7 @@
   {% for key, value in views.items() %}
   <h3><b>
     {% if not (view == key) %}
-    <a href="{{ url_for('extension_report', report_name='FavaReview', view=key) }}">{{ value[0] }}</a>
+    <a href="{{ url_for('extension_report', extension_name='FavaReview', view=key) }}">{{ value[0] }}</a>
     {% else %}
     {{ value[0] }}
     {% endif %}

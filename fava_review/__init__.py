@@ -1,11 +1,11 @@
 from __future__ import annotations
+
 from typing import Optional, Any
 
 from fava.application import g
 from fava.core import FavaLedger
 from fava.ext import FavaExtensionBase
 
-from fava_review import pivot_review
 from fava_review.pivot_review import PivotReview
 
 

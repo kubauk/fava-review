@@ -72,7 +72,8 @@ def test_header_only_has_links_for_unselected_view_options(example_ledger: FavaL
     assert_that(tags_no_links, contains_exactly('Income Statement'))
 
 
-@pytest.mark.parametrize('test_request', ['/extension_report/FavaReview?view=balance_sheet'], indirect=True)
+@pytest.mark.parametrize('test_request', ['http://localhost/beancount/extension/FavaReview/?view=balance_sheet'],
+                         indirect=True)
 def test_header_link_selection_changes_with_each_view(example_ledger: FavaLedger,
                                                       extension_template_soup: callable) -> None:
     template_soup = extension_template_soup("FavaReview.html", FavaReview(example_ledger))
