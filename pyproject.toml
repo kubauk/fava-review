@@ -7,7 +7,7 @@ license = "MIT License"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-fava = "1.25.1"
+fava = "^1.25.1"
 petl = "^1.7.4"
 beautifulsoup4 = "^4.10.0"
 
