@@ -10,6 +10,7 @@ python = "^3.8"
 fava = "^1.25.1"
 petl = "^1.7.4"
 beautifulsoup4 = "^4.10.0"
+lxml = "^5.0.0"
 
 [tool.poetry.dev-dependencies]
 PyHamcrest = "^2.0.3"
