@@ -6,16 +6,17 @@ authors = ["Jakub Jamro <kuba.jamro@gmail.com>"]
 license = "MIT License"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.15"
 fava = "^1.25.1"
 petl = "^1.7.4"
 beautifulsoup4 = "^4.10.0"
-lxml = "^5.0.0"
+lxml = "^6.1.3"
+beanquery = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
 PyHamcrest = "^2.0.3"
-pytest = "^6.2.5"
-flake8 = "^4.0.1"
+pytest = "^9.2.0"
+flake8 = "^7.5.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

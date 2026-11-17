@@ -3,7 +3,8 @@ from typing import NamedTuple, Callable
 
 import petl
 from fava.core import FavaLedger
-from fava.util.date import Interval
+from fava.core.query import QueryResultTable, StrColumn, IntColumn, DecimalColumn
+from fava.util.date import Month, Year, Quarter
 from hamcrest import assert_that, is_
 from hamcrest.core.base_matcher import BaseMatcher, T
 from hamcrest.core.description import Description
@@ -17,7 +18,7 @@ from fava_review.pivot_review import bean_query_to_petl
 
 def test_monthly_income_statement_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    rows = pivot_review.income_statement_by(Interval.MONTH)
+    rows = pivot_review.income_statement_by(Month)
 
     assert_that(rows, is_([{'account': 'Expenses:Groceries', '2020-10': Decimal('10.00'),
                             '2020-11': Decimal('20.00'), '2020-12': Decimal('30.00'),
@@ -38,7 +39,7 @@ def test_monthly_income_statement_query(example_ledger: FavaLedger):
 
 def test_yearly_income_statement_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    rows = pivot_review.income_statement_by(Interval.YEAR)
+    rows = pivot_review.income_statement_by(Year)
 
     assert_that(rows, is_([{'account': 'Expenses:Groceries',
                             '2020': Decimal('60.00'), '2021': Decimal('130.00'), 'total': Decimal('190.00')},
@@ -50,7 +51,7 @@ def test_yearly_income_statement_query(example_ledger: FavaLedger):
 
 def test_quarterly_income_statement_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    rows = pivot_review.income_statement_by(Interval.QUARTER)
+    rows = pivot_review.income_statement_by(Quarter)
 
     assert_that(rows, is_([{'account': 'Expenses:Groceries',
                             '2020Q4': Decimal('60.00'), '2021Q1': Decimal('60.00'), '2021Q2': Decimal('70.00'),
@@ -65,7 +66,7 @@ def test_quarterly_income_statement_query(example_ledger: FavaLedger):
 
 def test_monthly_balance_sheet_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    rows = pivot_review.balance_sheet_by(Interval.MONTH)
+    rows = pivot_review.balance_sheet_by(Month)
 
     assert_that(rows, is_([{'account': 'Assets:Current:JointAccount', '2020-10': Decimal('890.00'),
                             '2020-11': Decimal('890.00'), '2020-12': Decimal('890.00'),
@@ -86,7 +87,7 @@ def test_monthly_balance_sheet_query(example_ledger: FavaLedger):
 
 def test_yearly_balance_sheet_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    rows = pivot_review.balance_sheet_by(Interval.YEAR)
+    rows = pivot_review.balance_sheet_by(Year)
 
     assert_that(rows, is_([{'account': 'Assets:Current:JointAccount',
                             '2020': Decimal('2670.00'), '2021': Decimal('3645.00'), 'total': Decimal('6315.00')},
@@ -98,8 +99,9 @@ def test_yearly_balance_sheet_query(example_ledger: FavaLedger):
 
 def test_quarterly_balance_sheet_query(example_ledger: FavaLedger):
     pivot_review = PivotReview(example_ledger)
-    rows = pivot_review.balance_sheet_by(Interval.QUARTER)
+    rows = pivot_review.balance_sheet_by(Quarter)
 
+    print(rows)
     assert_that(rows, is_([{'account': 'Assets:Current:JointAccount',
                             '2020Q4': Decimal('2670.00'), '2021Q1': Decimal('2740.00'), '2021Q2': Decimal('905.00'),
                             'total': Decimal('6315.00')},
@@ -137,13 +139,9 @@ def petl_matching_csv(param) -> Matcher[Table]:
 
 
 def test_bean_query_to_petl():
-    # noinspection PyPep8Naming
-    TestTuple = NamedTuple('TestTuple',
-                           [('year', int), ('total', Decimal),
-                            ('account', str), ('month', int),
-                            ('currency', str)])
     t = bean_query_to_petl(
-        [TestTuple(account='Expenses:EatingOut', month=2, year=2022, total=Decimal(2), currency='GBP')], Interval.MONTH)
+        QueryResultTable([StrColumn("account"), IntColumn("month"), IntColumn("year"), DecimalColumn("total"),
+                          StrColumn("currency")], [('Expenses:EatingOut', 2, 2022, Decimal(2), 'GBP')]), Month)
     assert_that(list(petl.dicts(t)),
                 is_([{'date': '2022-02', 'account': 'Expenses:EatingOut', 'total': Decimal('2'), 'currency': 'GBP'}]))
 

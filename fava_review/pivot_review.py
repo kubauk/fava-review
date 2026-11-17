@@ -4,19 +4,23 @@ from typing import Optional, List
 import petl
 from fava.context import g
 from fava.core import FavaLedger
-from fava.util.date import Interval
+from fava.core.query import QueryResultTable
+from fava.util.date import Interval, Month, Quarter, Year
 from petl import Table
 from petl.transform.joins import JoinView
 
 
-def bean_query_to_petl(rows, interval: Interval) -> petl.Table:
+def bean_query_to_petl(result: QueryResultTable, interval: Interval) -> petl.Table:
     record_date = {
-        Interval.MONTH: lambda rec: '{}-{:02d}'.format(rec['year'], rec['month']),
-        Interval.YEAR: lambda rec: '{}'.format(rec['year']),
-        Interval.QUARTER: lambda rec: "".join(rec['quarter_date'].split('-'))
+        Month: lambda rec: '{}-{:02d}'.format(rec['year'], rec['month']),
+        Year: lambda rec: '{}'.format(rec['year']),
+        Quarter: lambda rec: "".join(rec['quarter'].split('-'))
     }
 
-    t = petl.fromdicts([nt._asdict() for nt in rows])
+    cols = [col.name for col in result.types]
+    rows_as_dicts = [dict(zip(cols, row)) for row in result.rows]
+
+    t = petl.fromdicts(rows_as_dicts)
     t = petl.fieldmap(t, {'date': record_date[interval],
                           'account': lambda rec: AccountName(rec['account'].strip()),
                           'total': lambda rec: rec['total'],
@@ -29,7 +33,7 @@ class AccountName(str):
 
 
 class PivotReview(object):
-    CURRENCY_QUERY = 'SELECT currency, count(currency) GROUP BY currency ORDER BY count_currency DESC'
+    CURRENCY_QUERY = 'SELECT currency, count(currency) GROUP BY currency ORDER BY count(currency) DESC'
 
     def __init__(self, ledger: FavaLedger) -> None:
         self._ledger: FavaLedger = ledger
@@ -43,28 +47,27 @@ class PivotReview(object):
         return self.report_for(interval, ['Assets', 'Liabilities', 'Equity'])
 
     def report_for(self, interval, accounts):
-        _, _, rows = self._ledger.query_shell.execute_query(query=self.review_query_for(interval, accounts),
-                                                            entries=g.filtered.entries)
-        t = bean_query_to_petl(rows, interval)
+        result = self._ledger.query_shell.execute_query_serialised(query=self.review_query_for(interval, accounts),
+                                                                   entries=g.filtered.entries)
+        t = bean_query_to_petl(result, interval)
         t = petl.pivot(t, 'account', 'date', 'total', sum, Decimal(0))
         t = self.add_total_column_and_row(t)
         return list(petl.dicts(t))
 
     def review_query_for(self, interval: Interval, accounts: List[str]):
         date_query = {
-            Interval.MONTH: 'year, month',
-            Interval.YEAR: 'year',
-            Interval.QUARTER: 'quarter(date)'
+            Month: ['year, month', 'year, month'],
+            Year: ['year', 'year'],
+            Quarter: ['quarter(date) as quarter', 'quarter(date)']
         }
 
         quoted_accounts = " OR account ~ ".join([f'"{a}"' for a in accounts])
 
-        return f'SELECT {date_query[interval]}, root(account, 4) as account, ' \
+        return f'SELECT {date_query[interval][0]}, root(account, 4) as account, ' \
                f'sum(number) as total, currency ' \
                f'WHERE (account ~ {quoted_accounts}) and currency = "{self.current_operating_currency()}" ' \
-               f'GROUP BY {date_query[interval]}, account, currency ' \
-               f'ORDER BY {date_query[interval]}, currency, account ' \
-               f'FLATTEN'
+               f'GROUP BY {date_query[interval][1]}, account, currency ' \
+               f'ORDER BY {date_query[interval][1]}, currency, account '
 
     @staticmethod
     def add_total_column_and_row(view: Table) -> Table:
@@ -95,6 +98,6 @@ class PivotReview(object):
     def best_starting_currency(self) -> str:
         if len(self._ledger.options['operating_currency']) > 0:
             return self._ledger.options['operating_currency'][0]
-        _, _, rows = self._ledger.query_shell.execute_query(query=self.CURRENCY_QUERY, 
-                                                            entries=self._ledger.get_filtered().entries)
-        return rows[0][0]
+        result = self._ledger.query_shell.execute_query_serialised(query=self.CURRENCY_QUERY,
+                                                                   entries=self._ledger.get_filtered().entries)
+        return result.rows[0][0]
